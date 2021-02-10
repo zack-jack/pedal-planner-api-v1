@@ -13,3 +13,11 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Temporary folder for scratch work, etc.
+tmp/*
+
+# misc
+.idea/*
+*.env
+bin/*
