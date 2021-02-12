@@ -39,9 +39,3 @@ up:
 
 down:
 	docker-compose -f docker-compose.yml down
-
-logs-api:
-	docker-compose -f docker-compose.yml logs -f api
-
-logs-mysql:
-	docker-compose -f docker-compose.yml logs -f mysql
