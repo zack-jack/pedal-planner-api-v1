@@ -11,3 +11,25 @@ Pedal Tetris: API Service V1 is the backend service for the Pedal Tetris applica
 ```
 brew install go
 ```
+
+## Build
+
+A `Makefile` is provided in the project root to facilitate running this project
+
+### start application
+
+```
+make up
+```
+
+### stop application
+
+```
+make down
+```
+
+### update dependencies
+
+```
+make vendor
+```
