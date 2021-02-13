@@ -21,6 +21,31 @@ var (
 )
 
 func main() {
+	type Config struct {
+		Web struct {
+			ReadTimeout     time.Duration
+			WriteTimeout    time.Duration
+			IdleTimeout     time.Duration
+			ShutdownTimeout time.Duration
+			Port            string
+		}
+	}
+	cfg := Config{
+		Web: struct {
+			ReadTimeout     time.Duration
+			WriteTimeout    time.Duration
+			IdleTimeout     time.Duration
+			ShutdownTimeout time.Duration
+			Port            string
+		}{
+			10 * time.Second,
+			30 * time.Second,
+			120 * time.Second,
+			5 * time.Second,
+			"5000",
+		},
+	}
+
 	// create router
 	router := mux.NewRouter()
 
@@ -43,11 +68,11 @@ func main() {
 	attachPedalsRoutes(v1, l)
 
 	server := &http.Server{
-		Addr:         ":" + "5000",
+		Addr:         ":" + cfg.Web.Port,
 		Handler:      router,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		IdleTimeout:  120 * time.Second,
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+		IdleTimeout:  cfg.Web.IdleTimeout,
 	}
 
 	// Make a channel to listen for errors coming from the listener. Use a
@@ -82,12 +107,12 @@ func main() {
 		l.Info().Msg("main : Start shutdown...")
 
 		// Create context for Shutdown call
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
 		defer cancel()
 
 		// Asking listener to shutdown and load shed.
 		if err := server.Shutdown(ctx); err != nil {
-			l.Error().Err(err).Msgf("main : Graceful shutdown did not complete in %v", 5*time.Second)
+			l.Error().Err(err).Msgf("main : Graceful shutdown did not complete in %v", cfg.Web.ShutdownTimeout)
 
 			if err := server.Close(); err != nil {
 				l.Fatal().Err(err).Msg("main : Could not stop http server")
