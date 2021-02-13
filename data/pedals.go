@@ -4,17 +4,23 @@ import "time"
 
 // Pedal represents a guitar pedal
 type Pedal struct {
-	ID        int
-	Brand     string
-	Name      string
-	Width     float32
-	Height    float32
-	Image     string
-	UpdatedAt string
-	CreatedAt string
+	ID        int     `json:"id,omitempty"`
+	Brand     string  `json:"brand"`
+	Name      string  `json:"name"`
+	Width     float32 `json:"width"`
+	Height    float32 `json:"height"`
+	Image     string  `json:"image"`
+	UpdatedAt string  `json:"-"`
+	CreatedAt string  `json:"-"`
 }
 
-var pedalList = []*Pedal{
+type Pedals []*Pedal
+
+func FindAllPedals() Pedals {
+	return pedals
+}
+
+var pedals = Pedals{
 	{
 		ID:        1,
 		Brand:     "Strymon",

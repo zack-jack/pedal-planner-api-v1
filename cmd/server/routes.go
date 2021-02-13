@@ -7,7 +7,7 @@ import (
 )
 
 func attachPedalsRoutes(v1 *router, lo zerolog.Logger) {
-	lo = lo.With().Str("handler", "pedals").Logger()
+	lo = lo.With().Str("handler", "getAllPedals").Logger()
 
-	v1.HandleFunc("/pedals", getPedals).Methods(http.MethodGet)
+	v1.HandleFunc("/pedals", getAllPedals).Methods(http.MethodGet)
 }

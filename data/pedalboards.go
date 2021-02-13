@@ -4,17 +4,23 @@ import "time"
 
 // Pedalboard represents a pedalboard
 type Pedalboard struct {
-	ID        int
-	Brand     string
-	Name      string
-	Width     float32
-	Height    float32
-	Image     string
-	UpdatedAt string
-	CreatedAt string
+	ID        int     `json:"id,omitempty"`
+	Brand     string  `json:"brand"`
+	Name      string  `json:"name"`
+	Width     float32 `json:"width"`
+	Height    float32 `json:"height"`
+	Image     string  `json:"image"`
+	UpdatedAt string  `json:"-"`
+	CreatedAt string  `json:"-"`
 }
 
-var pedalboardList = []*Pedalboard{
+type Pedalboards []*Pedalboard
+
+func FindAllPedalboards() Pedalboards {
+	return pedalboards
+}
+
+var pedalboards = Pedalboards{
 	{
 		ID:        1,
 		Brand:     "Creation Music Co",
