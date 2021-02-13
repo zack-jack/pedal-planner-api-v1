@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -51,7 +54,44 @@ func main() {
 	// buffered channel so the goroutine can exit if we don't collect this error.
 	serverErrors := make(chan error, 1)
 
+	// =========================================================================
+	// Start
+
 	// Start the service listening for requests.
-	l.Info().Msg("main : API Listening")
-	serverErrors <- server.ListenAndServe()
+	go func() {
+		l.Info().Msg("main : API Listening")
+		serverErrors <- server.ListenAndServe()
+	}()
+
+	// =========================================================================
+	// Shutdown
+
+	// Make a channel to listen for an interrupt or terminate signal from the OS.
+	// Use a buffered channel because the signal package requires it.
+	osSignals := make(chan os.Signal, 1)
+	signal.Notify(osSignals, os.Interrupt, syscall.SIGTERM)
+
+	// =========================================================================
+	// Stop API Service
+
+	select {
+	case err := <-serverErrors:
+		l.Fatal().Err(err).Msg("error starting server")
+
+	case <-osSignals:
+		l.Info().Msg("main : Start shutdown...")
+
+		// Create context for Shutdown call
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// Asking listener to shutdown and load shed.
+		if err := server.Shutdown(ctx); err != nil {
+			l.Error().Err(err).Msgf("main : Graceful shutdown did not complete in %v", 5*time.Second)
+
+			if err := server.Close(); err != nil {
+				l.Fatal().Err(err).Msg("main : Could not stop http server")
+			}
+		}
+	}
 }
