@@ -19,6 +19,7 @@ server
 tmp/*
 
 # misc
+.idea
 .idea/*
 *.env
 bin/*
