@@ -2,14 +2,19 @@ package main
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
+	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedals"
 )
 
 var (
@@ -20,30 +25,40 @@ var (
 	l = zerolog.New(os.Stderr).With().Timestamp().Logger()
 )
 
+func init() {
+	// loads values from .env into the system
+	if err := godotenv.Load(".env"); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
-	type Config struct {
+	var cfg struct {
+		PedalsDB struct {
+			WriterDSN    string `required:"true" envconfig:"PEDALS_WRITER_DSN"`
+			MaxOpenConns int    `default:"100" envconfig:"MAX_OPEN_CONNECTIONS"`
+		}
+		Build struct {
+			Version string `envconfig:"BUILD_VERSION"`
+			Env     string `envconfig:"APP_ENV"`
+		}
 		Web struct {
-			ReadTimeout     time.Duration
-			WriteTimeout    time.Duration
-			IdleTimeout     time.Duration
-			ShutdownTimeout time.Duration
-			Port            string
+			ReadTimeout     time.Duration `default:"10s" envconfig:"READ_TIMEOUT"`
+			WriteTimeout    time.Duration `default:"30s" envconfig:"WRITE_TIMEOUT"`
+			IdleTimeout     time.Duration `default:"120s" envconfig:"IDLE_TIMEOUT"`
+			ShutdownTimeout time.Duration `default:"5s" envconfig:"SHUTDOWN_TIMEOUT"`
+			Port            string        `default:"5000" envconfig:"PORT"`
 		}
 	}
-	cfg := Config{
-		Web: struct {
-			ReadTimeout     time.Duration
-			WriteTimeout    time.Duration
-			IdleTimeout     time.Duration
-			ShutdownTimeout time.Duration
-			Port            string
-		}{
-			10 * time.Second,
-			30 * time.Second,
-			120 * time.Second,
-			5 * time.Second,
-			"5000",
-		},
+
+	if err := envconfig.Process("", &cfg); err != nil {
+		l.Fatal().Err(err).Msg("error parsing config")
+	}
+
+	// pedals store
+	pedalsStore, err := setupPedalsStore(cfg.PedalsDB.WriterDSN, cfg.PedalsDB.MaxOpenConns)
+	if err != nil {
+		l.Panic().Err(err).Msg("could not create pedals store")
 	}
 
 	// create router
@@ -57,6 +72,12 @@ func main() {
 		})
 	}).Methods(http.MethodGet)
 
+	// pedals service
+	pedalsSvc, err := pedals.New(pedalsStore)
+	if err != nil {
+		l.Panic().Err(err).Msg("could not create pedals service")
+	}
+
 	// api v1
 	v1SubRouter := router.PathPrefix("/v1").Subrouter()
 	v1, err := newRouter(v1SubRouter)
@@ -65,7 +86,8 @@ func main() {
 	}
 
 	// attach routes
-	attachPedalsRoutes(v1, l)
+	attachPedalsRoutes(v1, &pedalsHandler{store: pedalsStore, pedalsSvc: pedalsSvc}, l)
+	attachPedalboardsRoutes(v1, l)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Web.Port,

@@ -1,9 +1,26 @@
 version: "3.8"
 services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - type: bind
+        source: ./schemas/
+        target: /docker-entrypoint-initdb.d/
+    ports:
+      - 3307:3306
+    networks:
+      - pedtet
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
   api:
     build:
       context: .
       dockerfile: ./Dockerfile
+    depends_on:
+      - mysql
+    env_file:
+      - .env
     restart: always
     ports:
       - 5000:5000

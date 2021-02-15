@@ -6,8 +6,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func attachPedalsRoutes(v1 *router, lo zerolog.Logger) {
+func attachPedalsRoutes(v1 *router, h *pedalsHandler, lo zerolog.Logger) {
 	lo = lo.With().Str("handler", "getAllPedals").Logger()
 
-	v1.HandleFunc("/pedals", getAllPedals).Methods(http.MethodGet)
+	v1.HandleFunc("/pedals", h.getAllPedals).Methods(http.MethodGet)
+}
+
+func attachPedalboardsRoutes(v1 *router, lo zerolog.Logger) {
+	lo = lo.With().Str("handler", "getAllPedalboards").Logger()
+
+	v1.HandleFunc("/pedalboards", getAllPedalboards).Methods(http.MethodGet)
 }
