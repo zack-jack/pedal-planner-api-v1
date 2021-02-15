@@ -1,2 +1,0 @@
-CREATE USER 'pedals'@'%' IDENTIFIED BY 'DONT_USE_ME';
-GRANT INSERT, SELECT, UPDATE ON pedal_data.* TO 'pedals';
