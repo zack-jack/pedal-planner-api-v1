@@ -25,7 +25,7 @@ const (
 	tblPedals = "pedal_data.pedals"
 )
 
-// Store is MySQL storage for storing deal items
+// Store is MySQL storage for storing pedal items
 type Store struct {
 	mysql.Store
 	stmts map[string]*sql.Stmt
