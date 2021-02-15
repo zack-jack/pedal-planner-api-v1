@@ -11,9 +11,3 @@ func attachPedalsRoutes(v1 *router, h *pedalsHandler, lo zerolog.Logger) {
 
 	v1.HandleFunc("/pedals", h.getAllPedals).Methods(http.MethodGet)
 }
-
-func attachPedalboardsRoutes(v1 *router, lo zerolog.Logger) {
-	lo = lo.With().Str("handler", "getAllPedalboards").Logger()
-
-	v1.HandleFunc("/pedalboards", getAllPedalboards).Methods(http.MethodGet)
-}

@@ -87,7 +87,6 @@ func main() {
 
 	// attach routes
 	attachPedalsRoutes(v1, &pedalsHandler{store: pedalsStore, pedalsSvc: pedalsSvc}, l)
-	attachPedalboardsRoutes(v1, l)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Web.Port,
