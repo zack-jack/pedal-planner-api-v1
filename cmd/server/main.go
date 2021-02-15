@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog"
+	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedalboards"
 	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedals"
 )
 
@@ -36,6 +37,10 @@ func main() {
 	var cfg struct {
 		PedalsDB struct {
 			WriterDSN    string `required:"true" envconfig:"PEDALS_WRITER_DSN"`
+			MaxOpenConns int    `default:"100" envconfig:"MAX_OPEN_CONNECTIONS"`
+		}
+		PedalboardsDB struct {
+			WriterDSN    string `required:"true" envconfig:"PEDALBOARDS_WRITER_DSN"`
 			MaxOpenConns int    `default:"100" envconfig:"MAX_OPEN_CONNECTIONS"`
 		}
 		Build struct {
@@ -61,6 +66,12 @@ func main() {
 		l.Panic().Err(err).Msg("could not create pedals store")
 	}
 
+	// pedalboards store
+	pedalboardsStore, err := setupPedalboardsStore(cfg.PedalboardsDB.WriterDSN, cfg.PedalboardsDB.MaxOpenConns)
+	if err != nil {
+		l.Panic().Err(err).Msg("could not create pedalboards store")
+	}
+
 	// create router
 	router := mux.NewRouter()
 
@@ -78,6 +89,12 @@ func main() {
 		l.Panic().Err(err).Msg("could not create pedals service")
 	}
 
+	// pedalboards service
+	pedalboardsSvc, err := pedalboards.New(pedalboardsStore)
+	if err != nil {
+		l.Panic().Err(err).Msg("could not create pedalboards service")
+	}
+
 	// api v1
 	v1SubRouter := router.PathPrefix("/v1").Subrouter()
 	v1, err := newRouter(v1SubRouter)
@@ -87,6 +104,7 @@ func main() {
 
 	// attach routes
 	attachPedalsRoutes(v1, &pedalsHandler{store: pedalsStore, pedalsSvc: pedalsSvc}, l)
+	attachPedalboardsRoutes(v1, &pedalboardsHandler{store: pedalboardsStore, pedalboardsSvc: pedalboardsSvc}, l)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Web.Port,
