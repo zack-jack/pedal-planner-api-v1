@@ -1,0 +1,73 @@
+---
+openapi: 3.0.0
+info:
+  title: Pedal Tetris API v1 Spec
+  description: Pedal Tetris API v1
+  contact:
+    email: z.jackson58@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/zack-jack/pedal-tetris-api-v1/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:5000
+  description: Local development server
+tags:
+- name: pedals
+  description: Pedals related endpoints
+paths:
+  /v1/pedals:
+    get:
+      tags:
+      - pedals
+      summary: returns all pedals
+      description: |
+        Returns all pedals
+      operationId: getAllPedals
+      responses:
+        "200":
+          description: pedals were fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getAllPedalsResponse'
+components:
+  schemas:
+    getAllPedalsResponse:
+      type: object
+      properties:
+        pedals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pedal'
+      description: a list of pedals with pedal data
+    Pedal:
+      required:
+      - brand
+      - height
+      - id
+      - image
+      - name
+      - width
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8fa72e86-b912-4f99-9d45-9b51824aa77e
+        brand:
+          type: string
+          example: Strymon
+        name:
+          type: string
+          example: El Capistan
+        width:
+          type: integer
+          example: 4
+        height:
+          type: integer
+        image:
+          type: string
+          example: strymon-elcap.png

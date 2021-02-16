@@ -34,8 +34,33 @@ go-fmt-check: go-fmt
 vendor:
 	go mod tidy && go mod vendor
 
+# Download and build docs from the API v1 Spec repository
+docs:
+	@echo building swagger docs...
+	@mkdir tmp
+	@git clone git@github.com:zack-jack/pedal-tetris-api-v1-spec.git ./tmp/ --depth=1
+	@npm i --prefix=./tmp/
+	@npm run build --prefix=./tmp/
+
+	# copy it to docs directory
+	@echo copying swagger ui build to the docs directory
+	@cp -r ./tmp/dist/* docs/
+
+	@echo docs built successfully! Cleaning up folder...
+	@rm -rf ./tmp
+
+	@echo cleanup successful!
+
 up:
 	docker-compose -f docker-compose.yml up --build -d
 
 down:
 	docker-compose -f docker-compose.yml down
+
+logs-api:
+	docker-compose -f docker-compose.yml logs -f api
+
+logs-mysql:
+	docker-compose -f docker-compose.yml logs -f mysql
+
+.PHONY: docs vendor

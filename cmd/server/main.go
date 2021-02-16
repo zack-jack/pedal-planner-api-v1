@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"sort"
+	"strings"
 	"syscall"
 	"time"
 
@@ -53,6 +56,7 @@ func main() {
 			IdleTimeout     time.Duration `default:"120s" envconfig:"IDLE_TIMEOUT"`
 			ShutdownTimeout time.Duration `default:"5s" envconfig:"SHUTDOWN_TIMEOUT"`
 			Port            string        `default:"5000" envconfig:"PORT"`
+			IncludeDocs     string        `envconfig:"INCLUDE_DOCS"`
 		}
 	}
 
@@ -83,6 +87,15 @@ func main() {
 		})
 	}).Methods(http.MethodGet)
 
+	// docs (should only be accessible in non-production environments)
+	if cfg.Web.IncludeDocs == "1" {
+		router.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("docs")))).Methods(http.MethodGet)
+		router.HandleFunc("/docs", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/docs/", http.StatusMovedPermanently)
+		}).Methods(http.MethodGet)
+		l.Info().Msg("docs endpoint enabled")
+	}
+
 	// pedals service
 	pedalsSvc, err := pedals.New(pedalsStore)
 	if err != nil {
@@ -105,6 +118,67 @@ func main() {
 	// attach routes
 	attachPedalsRoutes(v1, &pedalsHandler{store: pedalsStore, pedalsSvc: pedalsSvc}, l)
 	attachPedalboardsRoutes(v1, &pedalboardsHandler{store: pedalboardsStore, pedalboardsSvc: pedalboardsSvc}, l)
+
+	// add a route to return all routes in our router
+	if cfg.Web.IncludeDocs == "1" {
+		type rte struct {
+			path   string
+			method string
+		}
+		var routes []rte
+		if err := router.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
+			path, _ := route.GetPathTemplate()
+			methods, _ := route.GetMethods()
+
+			if len(methods) <= 0 {
+				routes = append(routes, rte{path, "?"})
+				return nil
+			}
+
+			for _, method := range methods {
+				if strings.TrimSpace(method) == "" {
+					method = "?"
+				}
+				routes = append(routes, rte{path, method})
+			}
+
+			// deduplicate
+			dedupe := func(s []rte) []rte {
+				seen := make(map[rte]struct{}, len(s))
+				j := 0
+				for _, v := range s {
+					if _, ok := seen[v]; ok {
+						continue
+					}
+					seen[v] = struct{}{}
+					s[j] = v
+					j++
+				}
+				return s[:j]
+			}
+			routes = dedupe(routes)
+
+			// sort by path
+			sort.Slice(routes, func(i, j int) bool {
+				return routes[i].path < routes[j].path
+			})
+
+			return nil
+		}); err != nil {
+			l.Panic().Err(err).Msg("could not walk routes")
+		}
+
+		var rtes string
+		for _, r := range routes {
+			rtes += fmt.Sprintf("%s\t%s\n", r.method, r.path)
+		}
+
+		router.HandleFunc("/routes", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(rtes))
+		})
+	}
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Web.Port,

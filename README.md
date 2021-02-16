@@ -33,3 +33,13 @@ make down
 ```
 make vendor
 ```
+
+## Documentation
+
+Documentation of API routes is done using [Swagger UI](https://swagger.io).
+
+The documentation is located in the [Pedal Tetris API v1 Spec repo.](https://github.com/zack-jack/pedal-tetris-api-v1-spec)
+
+To update the API docs with the latest API spec, run `make docs`
+
+To view the API docs, run `make up` and navigate to the `/docs` route.

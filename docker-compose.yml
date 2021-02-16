@@ -12,6 +12,11 @@ services:
       - pedtet
     environment:
       MYSQL_ROOT_PASSWORD: password
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "host.docker.internal" ]
+      timeout: 30s
+      interval: 2s
+      retries: 15
 
   api:
     build:
