@@ -11,5 +11,5 @@ USE pedalboard_db;
 
 INSERT INTO `pedalboards` (`id`, `brand`, `name`, `width`, `height`, `image`)
 VALUES
-    (5, 'Creation Music Co', 'Elevation 24x12.5', 24, 12.5, 'image/pedalboard/creation-elevation24125.png'),
+    (5, 'Creation Music Co', 'Elevation 24x12.5', 24, 12.5, 'image/pedalboard/creation-elevation-24-125.png'),
     (6, 'Pedaltrain', 'Classic 1', 22, 12.5, 'image/pedalboard/pedaltrain-classic1.png');
