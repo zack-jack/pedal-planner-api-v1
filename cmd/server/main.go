@@ -16,6 +16,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/rs/cors"
 	"github.com/rs/zerolog"
 	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedalboards"
 	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedals"
@@ -38,6 +39,9 @@ func init() {
 
 func main() {
 	var cfg struct {
+		CorsConfig struct {
+			AllowedOrigins []string `required:"true" envconfig:"ALLOWED_ORIGINS"`
+		}
 		PedalsDB struct {
 			WriterDSN    string `required:"true" envconfig:"PEDALS_WRITER_DSN"`
 			MaxOpenConns int    `default:"100" envconfig:"MAX_OPEN_CONNECTIONS"`
@@ -119,6 +123,32 @@ func main() {
 	attachPedalsRoutes(v1, &pedalsHandler{store: pedalsStore, pedalsSvc: pedalsSvc}, l)
 	attachPedalboardsRoutes(v1, &pedalboardsHandler{store: pedalboardsStore, pedalboardsSvc: pedalboardsSvc}, l)
 
+	// Configure CORS
+	c := cors.New(cors.Options{
+		AllowedOrigins: cfg.CorsConfig.AllowedOrigins,
+		AllowedMethods: []string{
+			http.MethodHead,
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+		AllowedHeaders: []string{
+			"Content-Type",
+			"Authorization",
+			"ResponseType",
+			"Cookie",
+			"Origin",
+			"Accept",
+			"Accept-Language",
+			"X-Requested-With",
+			"X-Cache-Zip",
+		},
+		AllowCredentials:   true,
+		OptionsPassthrough: false,
+	})
+
 	// add a route to return all routes in our router
 	if cfg.Web.IncludeDocs == "1" {
 		type rte struct {
@@ -182,7 +212,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Web.Port,
-		Handler:      router,
+		Handler:      c.Handler(router),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 		IdleTimeout:  cfg.Web.IdleTimeout,
