@@ -1,5 +1,5 @@
-CREATE DATABASE pedalboard_data;
-USE pedalboard_data;
+CREATE DATABASE pedalboard_db;
+USE pedalboard_db;
 
 SET FOREIGN_KEY_CHECKS=0;
 

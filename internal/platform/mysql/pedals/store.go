@@ -22,7 +22,7 @@ const (
 
 // Table names
 const (
-	tblPedals = "pedal_data.pedals"
+	tblPedals = "pedal_db.pedals"
 )
 
 // Store is MySQL storage for storing pedal items
@@ -39,7 +39,7 @@ func NewPedalsStore(db *sql.DB) (*Store, error) {
 		  SELECT
 				id, brand, name, width, height, image
 			FROM
-				pedal_data.pedals
+				pedal_db.pedals
 		`),
 	}
 

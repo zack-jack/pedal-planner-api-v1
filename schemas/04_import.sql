@@ -1,5 +1,5 @@
 -- pedals.sql
-USE pedal_data;
+USE pedal_db;
 
 INSERT INTO `pedals` (`id`, `brand`, `name`, `width`, `height`, `image`)
 VALUES
@@ -7,7 +7,7 @@ VALUES
     (4, 'Strymon', 'BigSky', 6.75, 5.1, "strymon-bigsky.png");
 
 -- pedalboards.sql
-USE pedalboard_data;
+USE pedalboard_db;
 
 INSERT INTO `pedalboards` (`id`, `brand`, `name`, `width`, `height`, `image`)
 VALUES
