@@ -3,7 +3,7 @@ package pedals
 import (
 	"context"
 
-	store "github.com/zack-jack/pedal-tetris-api-v1/internal/platform/mysql/pedals"
+	store "github.com/zack-jack/pedal-planner-api-v1/internal/platform/mysql/pedals"
 )
 
 // Store is the data store interface

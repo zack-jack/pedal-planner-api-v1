@@ -1,7 +1,7 @@
 FROM golang:1.15 as builder
 
-COPY . /go/src/github.com/zack-jack/pedal-tetris-api-v1/
-WORKDIR /go/src/github.com/zack-jack/pedal-tetris-api-v1/cmd/server
+COPY . /go/src/github.com/zack-jack/pedal-planner-api-v1/
+WORKDIR /go/src/github.com/zack-jack/pedal-planner-api-v1/cmd/server
 
 RUN git rev-parse HEAD > /root/commit
 RUN git describe --abbrev=0 --tags --always > /root/tag
@@ -20,7 +20,7 @@ RUN apk --no-cache add ca-certificates \
 USER app
 
 WORKDIR /server
-COPY --from=builder /go/src/github.com/zack-jack/pedal-tetris-api-v1/cmd/server/server .
-COPY --from=builder /go/src/github.com/zack-jack/pedal-tetris-api-v1/docs ./docs
+COPY --from=builder /go/src/github.com/zack-jack/pedal-planner-api-v1/cmd/server/server .
+COPY --from=builder /go/src/github.com/zack-jack/pedal-planner-api-v1/docs ./docs
 
 CMD ["./server"]

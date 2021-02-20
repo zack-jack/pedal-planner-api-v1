@@ -1,8 +1,8 @@
 ---
 openapi: 3.0.0
 info:
-  title: Pedal Tetris API v1 Spec
-  description: Pedal Tetris API v1
+  title: Pedal Planner API v1 Spec
+  description: Pedal Planner API v1
   contact:
     email: z.jackson58@gmail.com
   license:
@@ -10,7 +10,7 @@ info:
     url: https://opensource.org/licenses/MIT
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/zack-jack/pedal-tetris-api-v1/1.0.0
+- url: https://virtserver.swaggerhub.com/zack-jack/pedal-planner-api-v1/1.0.0
   description: SwaggerHub API Auto Mocking
 - url: http://localhost:5000
   description: Local development server

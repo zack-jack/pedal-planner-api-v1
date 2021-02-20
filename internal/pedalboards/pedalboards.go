@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	store "github.com/zack-jack/pedal-tetris-api-v1/internal/platform/mysql/pedalboards"
+	store "github.com/zack-jack/pedal-planner-api-v1/internal/platform/mysql/pedalboards"
 )
 
 // Service is provides functionality for pedalboards

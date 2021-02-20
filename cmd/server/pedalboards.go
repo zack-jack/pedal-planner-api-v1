@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	zlog "github.com/rs/zerolog/log"
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedalboards"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/pedalboards"
 )
 
 type pedalboardsHandler struct {

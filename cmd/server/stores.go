@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedalboards"
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedals"
-	pedalboardsmysql "github.com/zack-jack/pedal-tetris-api-v1/internal/platform/mysql/pedalboards"
-	pedalsmysql "github.com/zack-jack/pedal-tetris-api-v1/internal/platform/mysql/pedals"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/pedalboards"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/pedals"
+	pedalboardsmysql "github.com/zack-jack/pedal-planner-api-v1/internal/platform/mysql/pedalboards"
+	pedalsmysql "github.com/zack-jack/pedal-planner-api-v1/internal/platform/mysql/pedals"
 )
 
 func setupPedalsStore(dsn string, maxOpenConnections int) (pedals.Store, error) {

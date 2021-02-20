@@ -1,8 +1,8 @@
-# pedal-tetris-api-v1
+# pedal-planner-api-v1
 
 ## Description
 
-Pedal Tetris: API Service V1 is the backend service for the Pedal Tetris application.
+Pedal Planner: API Service V1 is the backend service for the Pedal Planner application.
 
 ## Getting Started
 
@@ -38,7 +38,7 @@ make vendor
 
 Documentation of API routes is done using [Swagger UI](https://swagger.io).
 
-The documentation is located in the [Pedal Tetris API v1 Spec repo.](https://github.com/zack-jack/pedal-tetris-api-v1-spec)
+The documentation is located in the [Pedal Planner API v1 Spec repo.](https://github.com/zack-jack/pedal-planner-api-v1-spec)
 
 ### update docs
 

@@ -1,5 +1,5 @@
 GO_FOLDERS=./cmd/server/... ./internal/... ./pkg/...
-LOCAL_GO_FOLDERS=./src/github.com/zack-jack/pedal-tetris-api-v1/cmd/server/... ./src/github.com/zack-jack/pedal-tetris-api-v1/internal/... ./src/github.com/zack-jack/pedal-tetris-api-v1/pkg/...
+LOCAL_GO_FOLDERS=./src/github.com/zack-jack/pedal-planner-api-v1/cmd/server/... ./src/github.com/zack-jack/pedal-planner-api-v1/internal/... ./src/github.com/zack-jack/pedal-planner-api-v1/pkg/...
 ROOT_DIR=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 GOPATH=$(shell go env GOPATH)
 BODYCLOSE=$(shell which bodyclose)
@@ -38,7 +38,7 @@ vendor:
 docs:
 	@echo building swagger docs...
 	@mkdir tmp
-	@git clone git@github.com:zack-jack/pedal-tetris-api-v1-spec.git ./tmp/ --depth=1
+	@git clone git@github.com:zack-jack/pedal-planner-api-v1-spec.git ./tmp/ --depth=1
 	@npm i --prefix=./tmp/
 	@npm run build --prefix=./tmp/
 

@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	api "github.com/zack-jack/pedal-tetris-api-v1"
+	api "github.com/zack-jack/pedal-planner-api-v1"
 )
 
 func jsonResponse(w http.ResponseWriter, r *http.Request, httpStatusCode int, body ...interface{}) {

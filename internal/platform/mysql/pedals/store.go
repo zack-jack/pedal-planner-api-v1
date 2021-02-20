@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/platform/mysql"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/platform/mysql"
 )
 
 // Queries

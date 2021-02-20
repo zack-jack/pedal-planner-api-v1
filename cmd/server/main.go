@@ -18,8 +18,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/cors"
 	"github.com/rs/zerolog"
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedalboards"
-	"github.com/zack-jack/pedal-tetris-api-v1/internal/pedals"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/pedalboards"
+	"github.com/zack-jack/pedal-planner-api-v1/internal/pedals"
 )
 
 var (
@@ -33,7 +33,7 @@ var (
 func init() {
 	// loads values from .env into the system
 	if err := godotenv.Load(".env"); err != nil {
-		log.Print("No .env file found")
+		log.Print("No .env file found", err)
 	}
 }
 
