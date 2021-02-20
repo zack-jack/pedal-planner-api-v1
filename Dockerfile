@@ -22,5 +22,6 @@ USER app
 WORKDIR /server
 COPY --from=builder /go/src/github.com/zack-jack/pedal-planner-api-v1/cmd/server/server .
 COPY --from=builder /go/src/github.com/zack-jack/pedal-planner-api-v1/docs ./docs
+COPY --from=builder /go/src/github.com/zack-jack/pedal-planner-api-v1/static ./static
 
 CMD ["./server"]

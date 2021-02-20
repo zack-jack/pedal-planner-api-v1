@@ -100,6 +100,12 @@ func main() {
 		l.Info().Msg("docs endpoint enabled")
 	}
 
+	// static files
+	router.PathPrefix("/image/").Handler(http.StripPrefix("/image/", http.FileServer(http.Dir("./static/image")))).Methods(http.MethodGet)
+	router.HandleFunc("/image", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/image/", http.StatusMovedPermanently)
+	}).Methods(http.MethodGet)
+
 	// pedals service
 	pedalsSvc, err := pedals.New(pedalsStore)
 	if err != nil {
